@@ -193,7 +193,8 @@ export default {
       // this.$set(this.squares, i, this.currentPlayer);
       if (!this.hasWinner()) {
         this.stepNumber++;
-        this.currentPlayer = this.stepNumber % 2 != 0 ? "X" : "O";
+        this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
+        // this.currentPlayer = this.stepNumber % 2 != 0 ? "X" : "O";
       }
     },
   },

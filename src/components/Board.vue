@@ -6,7 +6,6 @@
       class="board-row"
       v-bind:style="styleSquare"
     >
-      <!-- {{ row }} -->
       <Square
         v-for="i in sizeSquere"
         :key="indexByRow(i, row)"
@@ -33,7 +32,7 @@ export default {
     Square,
   },
   methods: {
-    indexByRow(index, row, max = 3) {
+    indexByRow(index, row, max = 5) {
       return row * max + index - (max + 1);
     },
 
