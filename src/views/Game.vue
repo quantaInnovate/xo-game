@@ -129,13 +129,13 @@ export default {
 
       // for (let i = 0; i < matches.length; i++) {
       //   const [a, b, c] = matches[i];
-      //   console.log(" math i ==>", [a, b, c]);
-      //   console.log(
-      //     " squares object = i ==>",
-      //     squares[a],
-      //     squares[b],
-      //     squares[c]
-      //   );
+      //   // console.log(" math i ==>", [a, b, c]);
+      //   // console.log(
+      //   //   " squares object = i ==>",
+      //   //   squares[a],
+      //   //   squares[b],
+      //   //   squares[c]
+      //   // );
       //   // console.log(" squares i ==>", squares);
       //   if (
       //     squares[a] &&
@@ -152,10 +152,7 @@ export default {
       const squaresMatch = matchesPattern.find(
         (x) => x.sizeSquare === this.selectedSquares
       );
-      // console.log("=squaresMatch", squaresMatch);
-      // console.log("===squares ", typeof squares);
-      // console.log(" sel ===squares ", squares["0"], squares[0]);
-      // let listSquares: Array = [];
+
       const listSquares = JSON.parse(JSON.stringify(squares)).map((x, i) => ({
         charecter: x,
         positionSquares: i,
@@ -163,16 +160,22 @@ export default {
       const sortSequares = listSquares
         .filter((v) => v.charecter === "X")
         .map((x) => x.positionSquares);
-      // console.log("=listSquares", listSquares);
-      // console.log("=sortSequares", sortSequares);
 
       for (const iterator of squaresMatch.pattern) {
-        // const matchPattern = iterator.every((v, i) => v === sortSequares[i]);
+        console.log("loop =iterator", iterator);
+        // console.log("=sortSequares", sortSequares);
+        // const checkListSize = iterator.every((v, i) => v === sortSequares[i]);
+        const checkListSize = sortSequares.filter((x, i) =>
+          iterator.includes(x)
+        );
+
         const matchPattern =
-          JSON.stringify(iterator) === JSON.stringify(sortSequares);
+          JSON.stringify(iterator) === JSON.stringify(checkListSize);
+
+        console.log("==findCheckPosition ==", checkListSize);
         // console.log("matchPattern", matchPattern);
         if (matchPattern) {
-          this.winner = sortSequares;
+          this.winner = checkListSize;
           return true;
         }
       }
@@ -192,7 +195,7 @@ export default {
       // this.$set(this.squares, i, this.currentPlayer);
       console.log("=this.hasWinner() :: ", this.hasWinner());
       if (!this.hasWinner()) {
-        this.stepNumber++;
+        this.stepNumber + 1;
         this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
       }
     },
