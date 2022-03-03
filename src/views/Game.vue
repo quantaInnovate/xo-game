@@ -4,12 +4,18 @@
       <div>game change size square</div>
       <select v-model="selectedSquares" @change="selectedChangeSquares">
         <option disabled value="">Please select one</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
+        <option v-for="item in options" v:bind:key="item">
+          {{ item }}
+        </option>
       </select>
 
-      <Board :squares="squares" :winner="winner" @click="click" />
+      <Board
+        :squares="squares"
+        :winner="winner"
+        @click="click"
+        :sizeSquere="selectedSquares"
+        :styleSquare="styleSquare"
+      />
       <div class="game-info">
         <p v-if="stepNumber === 0">
           Start Game &nbsp;<b :class="currentPlayer">{{ currentPlayer }}</b
@@ -49,17 +55,19 @@ export default {
       winner: null,
       sizeSquares: 3,
       selectedSquares: 3,
+      options: [3, 4, 5],
+      styleSquare: `grid-template-columns: repeat(3, 1fr)`,
     };
   },
   methods: {
     selectedChangeSquares(e) {
       const value = e.target.value;
-      console.log(value);
+      this.selectedSquares = Number(value);
       this.squares = Array(value ** 2).fill(null);
-      console.log("edit squere value =", this.squares);
+      this.styleSquare = `grid-template-columns: repeat(${value}, 1fr); `;
+      this.restart();
     },
     hasWinner() {
-      console.log(this.winner);
       if (this.winner) return true;
 
       const squares = this.squares;
@@ -73,19 +81,101 @@ export default {
         [0, 4, 8],
         [2, 4, 6],
       ];
+      const matchesPattern = [
+        {
+          sizeSquare: 3,
+          pattern: [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+          ],
+        },
+        {
+          sizeSquare: 4,
+          pattern: [
+            [0, 1, 2, 3],
+            [4, 5, 6, 7],
+            [8, 9, 10, 11],
+            [12, 13, 14, 15],
+            [0, 4, 8, 12],
+            [1, 5, 9, 13],
+            [2, 6, 10, 14],
+            [3, 7, 11, 15],
+            [0, 5, 10, 15],
+            [12, 9, 6, 3],
+          ],
+        },
+        {
+          sizeSquare: 5,
+          pattern: [
+            [0, 1, 2, 3, 4],
+            [5, 6, 7, 8, 9],
+            [10, 11, 12, 13, 14],
+            [15, 16, 17, 18, 19],
+            [20, 21, 22, 23, 24],
+            [0, 5, 10, 15, 20],
+            [1, 6, 11, 16, 21],
+            [2, 7, 12, 17, 22],
+            [3, 8, 13, 18, 23],
+            [4, 9, 14, 19, 24],
+          ],
+        },
+      ];
 
-      for (let i = 0; i < matches.length; i++) {
-        const [a, b, c] = matches[i];
-        if (
-          squares[a] &&
-          squares[a] === squares[b] &&
-          squares[a] === squares[c]
-        ) {
-          this.winner = [a, b, c];
+      // for (let i = 0; i < matches.length; i++) {
+      //   const [a, b, c] = matches[i];
+      //   console.log(" math i ==>", [a, b, c]);
+      //   console.log(
+      //     " squares object = i ==>",
+      //     squares[a],
+      //     squares[b],
+      //     squares[c]
+      //   );
+      //   // console.log(" squares i ==>", squares);
+      //   if (
+      //     squares[a] &&
+      //     squares[a] === squares[b] &&
+      //     squares[a] === squares[c]
+      //   ) {
+      //     this.winner = [a, b, c];
+      //     return true;
+      //   }
+      // }
+
+      // console.log("this.squares=", this.selectedSquares);
+      // // return false;
+      const squaresMatch = matchesPattern.find(
+        (x) => x.sizeSquare === this.selectedSquares
+      );
+      // console.log("=squaresMatch", squaresMatch);
+      // console.log("===squares ", typeof squares);
+      // console.log(" sel ===squares ", squares["0"], squares[0]);
+      // let listSquares: Array = [];
+      const listSquares = JSON.parse(JSON.stringify(squares)).map((x, i) => ({
+        charecter: x,
+        positionSquares: i,
+      }));
+      const sortSequares = listSquares
+        .filter((v) => v.charecter === "X")
+        .map((x) => x.positionSquares);
+      // console.log("=listSquares", listSquares);
+      // console.log("=sortSequares", sortSequares);
+
+      for (const iterator of squaresMatch.pattern) {
+        // const matchPattern = iterator.every((v, i) => v === sortSequares[i]);
+        const matchPattern =
+          JSON.stringify(iterator) === JSON.stringify(sortSequares);
+        // console.log("matchPattern", matchPattern);
+        if (matchPattern) {
+          this.winner = sortSequares;
           return true;
         }
       }
-
       return false;
     },
 
@@ -100,13 +190,13 @@ export default {
       if (this.squares[i] || this.winner) return;
       this.squares[i] = this.currentPlayer;
       // this.$set(this.squares, i, this.currentPlayer);
+      console.log("=this.hasWinner() :: ", this.hasWinner());
       if (!this.hasWinner()) {
         this.stepNumber++;
         this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
       }
     },
   },
-  mounted() {},
 };
 </script>
 

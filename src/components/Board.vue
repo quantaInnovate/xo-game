@@ -1,8 +1,14 @@
 <template>
   <div class="board" v-if="squares">
-    <div v-for="row in 3" :key="row" class="board-row">
+    <div
+      v-for="row in sizeSquere"
+      :key="row"
+      class="board-row"
+      v-bind:style="styleSquare"
+    >
+      <!-- {{ row }} -->
       <Square
-        v-for="i in 3"
+        v-for="i in sizeSquere"
         :key="indexByRow(i, row)"
         :value="squares[indexByRow(i, row)]"
         :disabled="!!winner"
@@ -20,11 +26,12 @@ export default {
   props: {
     squares: Array,
     winner: Array,
+    sizeSquere: Number,
+    styleSquare: String,
   },
   components: {
     Square,
   },
-
   methods: {
     indexByRow(index, row, max = 3) {
       return row * max + index - (max + 1);
@@ -33,9 +40,6 @@ export default {
     click(index, row) {
       this.$emit("click", this.indexByRow(index, row));
     },
-  },
-  mounted() {
-    console.log("=squares", this.squares);
   },
 };
 </script>
@@ -48,16 +52,16 @@ export default {
   width: 65vmin;
   height: 65vmin;
   display: grid;
-  grid-template-columns: 1fr;
+  /* grid-template-columns: 1fr;
   grid-template-rows: repeat(3, 1fr);
   backdrop-filter: blur(10px);
   background-blend-mode: exclusion;
-  background-image: var(--noise-pattern);
+  background-image: var(--noise-pattern); */
 }
 
 .board-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* grid-template-columns: repeat(3, 1fr); */
   grid-template-rows: 1fr;
 }
 </style>
