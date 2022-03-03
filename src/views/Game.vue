@@ -4,7 +4,7 @@
       <div>game change size square</div>
       <select v-model="selectedSquares" @change="selectedChangeSquares">
         <option disabled value="">Please select one</option>
-        <option v-for="item in options" v:bind:key="item">
+        <option v-for="item in options" :key="item">
           {{ item }}
         </option>
       </select>
@@ -33,8 +33,7 @@
         </p>
         <p v-else>
           Turn your game&nbsp;
-          <b :class="currentPlayer">{{ currentPlayer }}</b
-          >!&nbsp;atuar.
+          <b :class="currentPlayer">{{ currentPlayer }}</b> !&nbsp;
         </p>
       </div>
     </div>
@@ -154,15 +153,14 @@ export default {
       );
 
       const listSquares = JSON.parse(JSON.stringify(squares)).map((x, i) => ({
-        charecter: x,
+        character: x,
         positionSquares: i,
       }));
       const sortSequares = listSquares
-        .filter((v) => v.charecter === "X")
+        .filter((v) => v.character === "X")
         .map((x) => x.positionSquares);
 
       for (const iterator of squaresMatch.pattern) {
-        console.log("loop =iterator", iterator);
         // console.log("=sortSequares", sortSequares);
         // const checkListSize = iterator.every((v, i) => v === sortSequares[i]);
         const checkListSize = sortSequares.filter((x, i) =>
@@ -172,7 +170,6 @@ export default {
         const matchPattern =
           JSON.stringify(iterator) === JSON.stringify(checkListSize);
 
-        console.log("==findCheckPosition ==", checkListSize);
         // console.log("matchPattern", matchPattern);
         if (matchPattern) {
           this.winner = checkListSize;
@@ -185,18 +182,18 @@ export default {
     restart() {
       this.squares = Array(3 ** 2).fill(null);
       this.stepNumber = 0;
-      this.currentPlayer = this.currentPlayer;
+      this.currentPlayer = "X";
       this.winner = null;
     },
 
     click(i) {
       if (this.squares[i] || this.winner) return;
       this.squares[i] = this.currentPlayer;
+      console.log("now user =", this.currentPlayer);
       // this.$set(this.squares, i, this.currentPlayer);
-      console.log("=this.hasWinner() :: ", this.hasWinner());
       if (!this.hasWinner()) {
-        this.stepNumber + 1;
-        this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
+        this.stepNumber++;
+        this.currentPlayer = this.stepNumber % 2 != 0 ? "X" : "O";
       }
     },
   },
